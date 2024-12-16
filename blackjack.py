@@ -41,8 +41,10 @@ class Blackjack:
                 self.hand.append(11)
             else:
                 print("Invalid choice. defaulting to 11")
+                self.hand.append(11)
         else:
             self.hand.append(random_card)
+        
    
         print(sum(self.hand))
 
@@ -70,45 +72,72 @@ class Blackjack:
         print("{name}'s hand: ".format(name = self.name))
         print(sum(self.hand))
     
+    def reset_hand(self):
+        for i in range(len(self.hand)):
+            self.hand.pop()
+        return self.hand
 # The print statements here are used to test functions and troubleshoot(debug).
 
 p1 = Blackjack('Ramone')
 p2 = Blackjack('Dealer')
 
+
+
 bank = int(input("How much money do you have to bet? "))
-wager = int(input("How much are you going to bet? "))
 
-p1.draw_cards()
-p2.draw_cards()
 
-player1_hand = sum(p1.hand)
-player2_hand = sum(p2.hand)
+def game_function(bank):
+    wager = int(input("How much are you going to bet? "))
 
-while bank > 0:
-    if player1_hand <= 21 and player2_hand > 21:
-        print(f"{p1.name} wins!")
-        bank += wager
-    elif player1_hand == player2_hand:
-        print("We have a tie!")
-    elif player2_hand <= 21 and player1_hand > 21:
-        print(f"{p2.name} wins!")
-        bank -= wager
-    elif player2_hand > player1_hand and player1_hand and player2_hand <= 21:
-        print(f"{p2.name} wins")
-        bank -= wager
-    elif player1_hand > player2_hand and player2_hand and player1_hand <= 21:
-        print(f"{p1.name} wins")
-        bank -= wager
-    else:
-        print("You both lose!")
-        bank -= wager
+    while wager > bank:
+        print("Invalid wager. Please try again.")
+        wager = int(input("How much are you going to bet? "))
+
+    p1.draw_cards()
+    p2.draw_cards()
+    player1_hand = sum(p1.hand)
+    player2_hand = sum(p2.hand)
+    if bank > 0:
+        if player1_hand <= 21 and player2_hand > 21:
+            print(f"{p1.name} wins!")
+            bank += wager
+        elif player1_hand == player2_hand and player1_hand and player2_hand <= 21:
+            print("We have a tie!")
+        elif player2_hand <= 21 and player1_hand > 21:
+            print(f"{p2.name} wins!")
+            bank -= wager
+        elif player2_hand > player1_hand and player1_hand and player2_hand <= 21:
+            print(f"{p2.name} wins")
+            bank -= wager
+        elif player1_hand > player2_hand and player2_hand and player1_hand <= 21:
+            print(f"{p1.name} wins")
+            bank += wager
+        else:
+            print("You both lose!")
+            bank -= wager
+
+
     print(f" {p1.name} : {player1_hand}")
     print(f" {p2.name} : {player2_hand}")
     print(f"You now have {bank} left in your bank. ")
-    if bank > 0:
-        play_again = input("Would you like to play again? Please type y or n. ").lower()
-        if play_again == 'n':
-            break
+    play_again = input("Would you like to play again? Please type y or n. ").lower()
+    if play_again == 'n':
+        print(f"Good Game. \n You ended with ${bank}. ")
+        bank == -1
+    elif play_again == 'y':
+        if bank <= 0:
+            print("You are broke. Please leave. ")
+        else:
+            p1.reset_hand()
+            p2.reset_hand()
+            game_function(bank)
+
+def main():
+
+    game_function(bank)
+
+if __name__ == "__main__":
+    main()
 
 
 
